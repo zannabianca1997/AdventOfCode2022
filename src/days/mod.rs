@@ -27,7 +27,7 @@ pub const DAYS: [SolveState; 25] = [
     Done(_4::part1, _4::part2),
     Done(_5::part1, _5::part2),
     Done(_6::part1, _6::part2),
-    Unsolved,
+    Done(_7::part1, _7::part2),
     Unsolved,
     Unsolved,
     Unsolved,
