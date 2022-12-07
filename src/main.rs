@@ -277,9 +277,9 @@ fn result_table(results: Vec<DayResult>) -> String {
     // measuring complete column size
     let day_col_size = day_col_size + 2;
     let part1_col_size =
-        part1_res_col_size + " (time: ".len() + part1_time_col_size + " )".len() + 2;
+        part1_res_col_size + " (time: ".len() + part1_time_col_size + ")".len() + 2;
     let part2_col_size =
-        part2_res_col_size + " (time: ".len() + part2_time_col_size + " )".len() + 2;
+        part2_res_col_size + " (time: ".len() + part2_time_col_size + ")".len() + 2;
 
     // preparing header
     let hline = [
@@ -321,7 +321,7 @@ fn result_table(results: Vec<DayResult>) -> String {
                         &pad_left(&r, part1_res_col_size),
                         " (time: ",
                         &pad_left(&t, part1_time_col_size),
-                        " ) ",
+                        ") ",
                     ]
                     .concat()
                 })
@@ -333,7 +333,7 @@ fn result_table(results: Vec<DayResult>) -> String {
                         &pad_left(&r, part2_res_col_size),
                         " (time: ",
                         &pad_left(&t, part2_time_col_size),
-                        " ) ",
+                        ") ",
                     ]
                     .concat()
                 })
