@@ -90,7 +90,7 @@ impl Error for ParseError {}
 fn parse_input(input: &str) -> Result<Vec<(Direction, usize)>, ParseError> {
     Result::from_iter(input.trim().lines().map(|line| {
         line.split_once(" ")
-            .ok_or(ParseError::MissingSpace(line.to_owned()))
+            .ok_or_else(|| ParseError::MissingSpace(line.to_owned()))
             .and_then(|(p1, p2)| {
                 p2.trim()
                     .parse::<usize>()
