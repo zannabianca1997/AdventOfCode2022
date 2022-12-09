@@ -32,9 +32,6 @@ impl<T> Grid<T> {
     fn iter(&self) -> impl Iterator<Item = &T> {
         self.memory.iter()
     }
-    fn iter_mut(&mut self) -> impl Iterator<Item = &mut T> {
-        self.memory.iter_mut()
-    }
 }
 
 impl<T> Grid<T>
@@ -86,43 +83,43 @@ fn parse_input(input: &str) -> Result<Grid<u8>, Box<dyn Error>> {
 
 pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
     let heights = parse_input(input)?;
-    let (H, W) = heights.shape();
+    let (max_height, max_width) = heights.shape();
     let mut visible = Grid::new_like(&heights, false);
 
-    for x in 0..W {
+    for x in 0..max_width {
         // top -> down
         let mut min_h = heights[(x, 0)];
         visible[(x, 0)] = true;
-        for y in 1..H {
+        for y in 1..max_height {
             if heights[(x, y)] > min_h {
                 min_h = heights[(x, y)];
                 visible[(x, y)] = true;
             }
         }
         // bottom -> up
-        let mut min_h = heights[(x, H - 1)];
-        visible[(x, H - 1)] = true;
-        for y in (0..(H - 1)).rev() {
+        let mut min_h = heights[(x, max_height - 1)];
+        visible[(x, max_height - 1)] = true;
+        for y in (0..(max_height - 1)).rev() {
             if heights[(x, y)] > min_h {
                 min_h = heights[(x, y)];
                 visible[(x, y)] = true;
             }
         }
     }
-    for y in 0..H {
+    for y in 0..max_height {
         // left -> right
         let mut min_h = heights[(0, y)];
         visible[(0, y)] = true;
-        for x in 1..W {
+        for x in 1..max_width {
             if heights[(x, y)] > min_h {
                 min_h = heights[(x, y)];
                 visible[(x, y)] = true;
             }
         }
         // right -> left
-        let mut min_h = heights[(W - 1, y)];
-        visible[(W - 1, y)] = true;
-        for x in (0..(W - 1)).rev() {
+        let mut min_h = heights[(max_width - 1, y)];
+        visible[(max_width - 1, y)] = true;
+        for x in (0..(max_width - 1)).rev() {
             if heights[(x, y)] > min_h {
                 min_h = heights[(x, y)];
                 visible[(x, y)] = true;
@@ -135,20 +132,21 @@ pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
 
 pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
     let heights = parse_input(input)?;
-    let (H, W) = heights.shape();
+    let (max_heigth, max_width) = heights.shape();
 
     let mut max_scenic_score = 0;
-    for tx in 0..W {
-        for ty in 0..H {
+    for tx in 0..max_width {
+        for ty in 0..max_heigth {
             let treehouse_height = heights[(tx, ty)];
-            let scenic_score: usize = if tx == 0 || ty == 0 || tx == W - 1 || ty == H - 1 {
-                0
-            } else {
-                (
-                    // up
-                    {
+            let scenic_score: usize =
+                if tx == 0 || ty == 0 || tx == max_width - 1 || ty == max_heigth - 1 {
+                    0
+                } else {
+                    (
+                        // up
+                        {
                         let mut ray_len = 0;
-                        for y in (ty + 1)..H {
+                        for y in (ty + 1)..max_heigth {
                             ray_len += 1;
                             if heights[(tx, y)] >= treehouse_height {
                                 break;
@@ -170,7 +168,7 @@ pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
                     // left
                     {
                         let mut ray_len = 0;
-                        for x in (tx + 1)..W {
+                        for x in (tx + 1)..max_width {
                             ray_len += 1;
                             if heights[(x, ty)] >= treehouse_height {
                                 break;
@@ -189,8 +187,8 @@ pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
                         }
                         ray_len
                     }
-                )
-            };
+                    )
+                };
 
             if scenic_score > max_scenic_score {
                 max_scenic_score = scenic_score

@@ -8,6 +8,7 @@ mod _5;
 mod _6;
 mod _7;
 mod _8;
+mod _9;
 
 pub type SolveFn = fn(&str) -> Result<String, Box<dyn Error>>;
 
@@ -30,7 +31,7 @@ pub const DAYS: [SolveState; 25] = [
     Done(_6::part1, _6::part2),
     Done(_7::part1, _7::part2),
     Done(_8::part1, _8::part2),
-    Unsolved,
+    Done(_9::part1, _9::part2),
     Unsolved,
     Unsolved,
     Unsolved,
