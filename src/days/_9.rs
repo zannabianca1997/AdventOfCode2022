@@ -47,7 +47,7 @@ impl Link {
             (1, 2) | (2, 1) | (2, 2) => (1, 1),
             (-2, 1) | (-1, 2) | (-2, 2) => (-1, 1),
             // too far, impossible
-            _ => unreachable!(),
+            _ => unreachable!("Link is stretched more than 2"),
         };
         self.tail.0 += tdx;
         self.tail.1 += tdy;
