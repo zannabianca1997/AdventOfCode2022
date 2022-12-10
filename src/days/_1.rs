@@ -1,5 +1,7 @@
 use std::{error::Error, fmt::Display, num::ParseIntError};
 
+use super::PuzzleResult;
+
 fn elves_backpacks(input: &str) -> Result<Vec<Vec<i64>>, ParseIntError> {
     Result::from_iter(input.split("\n\n").map(|pack| {
         Result::from_iter(
@@ -30,7 +32,7 @@ impl Display for InputError {
     }
 }
 
-pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part1(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     elves_backpacks(input)
         .map_err(|err| err.into())
         .and_then(|backpacks| {
@@ -40,10 +42,10 @@ pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
                 .max()
                 .ok_or(InputError::Empty.into())
         })
-        .map(|v: i64| v.to_string())
+        .map(|v: i64| PuzzleResult::Numeric(v))
 }
 
-pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     elves_backpacks(input)
         .map_err(|err| err.into())
         .and_then(|backpacks| {
@@ -64,5 +66,5 @@ pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
             }
             Ok(largest_three.into_iter().sum())
         })
-        .map(|v: i64| v.to_string())
+        .map(|v: i64| PuzzleResult::Numeric(v))
 }

@@ -3,6 +3,8 @@ use std::{
     ops::{Index, IndexMut},
 };
 
+use super::PuzzleResult;
+
 struct Grid<T> {
     height: usize,
     width: usize,
@@ -81,7 +83,7 @@ fn parse_input(input: &str) -> Result<Grid<u8>, Box<dyn Error>> {
     Ok(grid)
 }
 
-pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part1(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let heights = parse_input(input)?;
     let (max_height, max_width) = heights.shape();
     let mut visible = Grid::new_like(&heights, false);
@@ -127,10 +129,12 @@ pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
         }
     }
 
-    Ok(visible.iter().filter(|v| **v).count().to_string())
+    Ok(PuzzleResult::Numeric(
+        visible.iter().filter(|v| **v).count() as i64,
+    ))
 }
 
-pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let heights = parse_input(input)?;
     let (max_heigth, max_width) = heights.shape();
 
@@ -195,5 +199,5 @@ pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
             }
         }
     }
-    Ok(max_scenic_score.to_string())
+    Ok(PuzzleResult::Numeric(max_scenic_score as i64))
 }

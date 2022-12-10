@@ -1,6 +1,8 @@
 use std::error::Error;
 
-pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
+use super::PuzzleResult;
+
+pub fn part1(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let input: Vec<_> = input.chars().collect();
     const WINDOW: usize = 4;
     'outer: for (pos, window) in input.windows(WINDOW).enumerate() {
@@ -11,12 +13,12 @@ pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
                 }
             }
         }
-        return Ok((pos + WINDOW).to_string());
+        return Ok(PuzzleResult::Numeric((pos + WINDOW) as i64));
     }
     Err("Marker not found".into())
 }
 
-pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let input: Vec<_> = input.chars().collect();
     const WINDOW: usize = 14;
     'outer: for (pos, window) in input.windows(WINDOW).enumerate() {
@@ -27,7 +29,7 @@ pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
                 }
             }
         }
-        return Ok((pos + WINDOW).to_string());
+        return Ok(PuzzleResult::Numeric((pos + WINDOW) as i64));
     }
     Err("Marker not found".into())
 }

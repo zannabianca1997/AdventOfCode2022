@@ -1,5 +1,7 @@
 use std::{error::Error, fmt::Display};
 
+use super::PuzzleResult;
+
 #[derive(Debug)]
 enum InputError {
     OddLenght(String),
@@ -97,7 +99,7 @@ fn read_input_groups(input: &str) -> Result<Vec<(Container, Container, Container
     Ok(res)
 }
 
-pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part1(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let input = read_input_compartments(input)?;
     let mut total = 0;
     for (c1, c2) in input {
@@ -108,10 +110,10 @@ pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
             return Err(InputError::NoCommon.into());
         }
     }
-    Ok(total).map(|v: i64| v.to_string())
+    Ok(total).map(|v: i64| PuzzleResult::Numeric(v))
 }
 
-pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let input = read_input_groups(input)?;
     let mut total = 0;
     for (c1, c2, c3) in input {
@@ -122,5 +124,5 @@ pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
             return Err(InputError::NoCommon.into());
         }
     }
-    Ok(total).map(|v: i64| v.to_string())
+    Ok(total).map(|v: i64| PuzzleResult::Numeric(v))
 }

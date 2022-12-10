@@ -1,5 +1,7 @@
 use std::{error::Error, fmt::Display, num::ParseIntError};
 
+use super::PuzzleResult;
+
 #[derive(Debug)]
 enum InputError {
     NoComma,
@@ -53,18 +55,18 @@ fn read_input(input: &str) -> Result<Vec<(SectionRange, SectionRange)>, InputErr
     }))
 }
 
-pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part1(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     Ok(read_input(input)?
         .into_iter()
         .filter(|(r1, r2)| r1.is_inside(*r2) || r2.is_inside(*r1))
         .count() as i64)
-    .map(|v: i64| v.to_string())
+    .map(|v: i64| PuzzleResult::Numeric(v))
 }
 
-pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     Ok(read_input(input)?
         .into_iter()
         .filter(|(r1, r2)| r1.overlap(*r2))
         .count() as i64)
-    .map(|v: i64| v.to_string())
+    .map(|v: i64| PuzzleResult::Numeric(v))
 }

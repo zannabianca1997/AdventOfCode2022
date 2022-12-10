@@ -1,5 +1,7 @@
 use std::{error::Error, fmt::Display};
 
+use super::PuzzleResult;
+
 // use regex::Regex;
 
 #[derive(Debug)]
@@ -112,7 +114,7 @@ fn stack_tops(stacks: Vec<Vec<char>>) -> Result<String, InputError> {
     }))
 }
 
-pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part1(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let (mut stacks, moves) = parse_input(input)?;
     for mov in moves {
         for _ in 0..mov.quantity {
@@ -122,10 +124,12 @@ pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
             stacks[mov.to as usize].push(item)
         }
     }
-    stack_tops(stacks).map_err(|e| e.into())
+    stack_tops(stacks)
+        .map(|s| PuzzleResult::Textual(s))
+        .map_err(|e| e.into())
 }
 
-pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let (mut stacks, moves) = parse_input(input)?;
     for mov in moves {
         let mut items = vec![];
@@ -140,5 +144,7 @@ pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
             stacks[mov.to as usize].push(item)
         }
     }
-    stack_tops(stacks).map_err(|e| e.into())
+    stack_tops(stacks)
+        .map(|s| PuzzleResult::Textual(s))
+        .map_err(|e| e.into())
 }

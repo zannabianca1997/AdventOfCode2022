@@ -1,5 +1,7 @@
 use std::{collections::HashSet, error::Error, fmt::Display, num::ParseIntError};
 
+use super::PuzzleResult;
+
 #[derive(Clone, Copy)]
 enum Direction {
     Up,
@@ -110,7 +112,7 @@ fn parse_input(input: &str) -> Result<Vec<(Direction, usize)>, ParseError> {
     }))
 }
 
-pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part1(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let directions = parse_input(input)?;
     let mut head = (0, 0);
     let mut chain = Link { tail: head };
@@ -128,10 +130,10 @@ pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
         }
     }
 
-    Ok(tail_positions.len().to_string())
+    Ok(PuzzleResult::Numeric(tail_positions.len() as i64))
 }
 
-pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let directions = parse_input(input)?;
     let mut head = (0, 0);
     let mut chain: Rope<9> = Rope::new();
@@ -149,5 +151,5 @@ pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
         }
     }
 
-    Ok(tail_positions.len().to_string())
+    Ok(PuzzleResult::Numeric(tail_positions.len() as i64))
 }

@@ -1,5 +1,7 @@
 use std::{collections::HashMap, error::Error};
 
+use super::PuzzleResult;
+
 #[derive(Debug)]
 enum Command<'a> {
     Ls(Vec<&'a str>, Vec<(&'a str, usize)>),
@@ -161,7 +163,7 @@ fn build_directory_tree(mut history: Vec<Command<'_>>) -> Result<Directory, Box<
     Ok(current_path.pop().unwrap().1)
 }
 
-pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part1(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let history = parse_input(input)?;
     let mut root_dir = build_directory_tree(history)?;
 
@@ -172,10 +174,10 @@ pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
             total += size
         }
     });
-    Ok(total.to_string())
+    Ok(PuzzleResult::Numeric(total as i64))
 }
 
-pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let history = parse_input(input)?;
     let mut root_dir = build_directory_tree(history)?;
 
@@ -192,6 +194,5 @@ pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
             smallest = size
         }
     });
-
-    Ok(smallest.to_string())
+    Ok(PuzzleResult::Numeric(smallest as i64))
 }

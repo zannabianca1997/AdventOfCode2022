@@ -1,5 +1,7 @@
 use std::{error::Error, fmt::Display};
 
+use super::PuzzleResult;
+
 #[derive(Debug, Clone, Copy)]
 enum RPSMove {
     Rock,
@@ -92,7 +94,7 @@ fn read_input(input: &str) -> Result<Vec<(RPSMove, Column2)>, InputError> {
     }))
 }
 
-pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part1(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     Ok(read_input(input)?
         .into_iter()
         .map(|(p2, p1)| {
@@ -104,10 +106,10 @@ pub fn part1(input: &str) -> Result<String, Box<dyn Error>> {
             p1.round_score(p2)
         })
         .sum())
-    .map(|v: i64| v.to_string())
+    .map(|v: i64| PuzzleResult::Numeric(v))
 }
 
-pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
+pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     Ok(read_input(input)?
         .into_iter()
         .map(|(p2, p1)| {
@@ -132,5 +134,5 @@ pub fn part2(input: &str) -> Result<String, Box<dyn Error>> {
             p1.round_score(p2)
         })
         .sum())
-    .map(|v: i64| v.to_string())
+    .map(|v: i64| PuzzleResult::Numeric(v))
 }

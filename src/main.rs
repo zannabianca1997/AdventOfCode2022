@@ -4,7 +4,7 @@ extern crate clap;
 // extern crate lazy_static;
 
 use clap::{builder::PossibleValue, Parser, ValueEnum};
-use days::{SolveFn, DAYS};
+use days::{PuzzleResult, SolveFn, DAYS};
 use std::{
     error::Error,
     ffi::OsString,
@@ -59,7 +59,7 @@ struct Args {
 
 #[derive(Debug, Clone)]
 struct RunResult {
-    res: String,
+    res: PuzzleResult,
     time: Duration,
 }
 
@@ -213,18 +213,28 @@ fn format_duration(d: Duration) -> String {
 fn result_table(results: Vec<DayResult>) -> String {
     let header = ("day", "part one", "part two");
     let mut table = Vec::with_capacity(results.len());
+    let mut multilines = vec![];
 
-    fn part_entry(res: RunResult) -> (String, String) {
-        (res.res.to_string(), format_duration(res.time).to_string())
-    }
+    let mut part_entry = |day: usize, part: usize, res: RunResult| -> (String, String) {
+        (
+            match res.res.repr() {
+                days::ResultRepr::Short(s) => s,
+                days::ResultRepr::Multiline(s) => {
+                    multilines.push((day, part, s));
+                    "<multiline>".to_owned()
+                }
+            },
+            format_duration(res.time).to_string(),
+        )
+    };
 
     for (d, res) in results.into_iter().enumerate() {
         // erase empty lines
         if res.p1.is_some() || res.p2.is_some() {
             table.push((
                 (d + 1).to_string(),
-                res.p1.map(|v| part_entry(v)),
-                res.p2.map(|v| part_entry(v)),
+                res.p1.map(|v| part_entry(d + 1, 1, v)),
+                res.p2.map(|v| part_entry(d + 1, 2, v)),
             ))
         }
     }
@@ -345,7 +355,16 @@ fn result_table(results: Vec<DayResult>) -> String {
     }
     table_str.push_str(&hline);
 
-    table_str
+    // adding sections
+    let mut sections = vec![];
+    for (day, part, result) in multilines {
+        sections.push(format!(" === Day {} part {} ===\n\n{}", day, part, result))
+    }
+
+    // building the result
+    let mut result = vec![table_str];
+    result.extend(sections);
+    result.join("\n\n")
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
