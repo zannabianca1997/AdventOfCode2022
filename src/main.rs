@@ -2,6 +2,7 @@ extern crate clap;
 extern crate regex;
 #[macro_use]
 extern crate lazy_static;
+extern crate arrayvec;
 
 use clap::{builder::PossibleValue, Parser, ValueEnum};
 use days::{PuzzleResult, SolveFn, DAYS};

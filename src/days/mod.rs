@@ -2,6 +2,8 @@ use std::error::Error;
 
 mod _1;
 mod _10;
+mod _11;
+mod _12;
 mod _2;
 mod _3;
 mod _4;
@@ -56,8 +58,8 @@ pub const DAYS: [SolveState; 25] = [
     Done(_8::part1, _8::part2),
     Done(_9::part1, _9::part2),
     Done(_10::part1, _10::part2),
-    Unsolved,
-    Unsolved,
+    Done(_11::part1, _11::part2),
+    Done(_12::part1, _12::part2),
     Unsolved,
     Unsolved,
     Unsolved,
