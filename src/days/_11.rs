@@ -2,7 +2,7 @@ use regex::Regex;
 
 use super::PuzzleResult;
 use std::{
-    collections::{hash_map::RandomState, BinaryHeap, HashMap, HashSet, VecDeque},
+    collections::{hash_map::RandomState, BinaryHeap, HashSet, VecDeque},
     error::Error,
     fmt::Display,
     str::FromStr,

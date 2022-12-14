@@ -1,3 +1,5 @@
+#![feature(is_some_and)]
+
 extern crate clap;
 extern crate regex;
 #[macro_use]

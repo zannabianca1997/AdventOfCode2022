@@ -4,6 +4,8 @@ mod _1;
 mod _10;
 mod _11;
 mod _12;
+mod _13;
+mod _14;
 mod _2;
 mod _3;
 mod _4;
@@ -60,8 +62,8 @@ pub const DAYS: [SolveState; 25] = [
     Done(_10::part1, _10::part2),
     Done(_11::part1, _11::part2),
     Done(_12::part1, _12::part2),
-    Unsolved,
-    Unsolved,
+    Done(_13::part1, _13::part2),
+    Done(_14::part1, _14::part2),
     Unsolved,
     Unsolved,
     Unsolved,

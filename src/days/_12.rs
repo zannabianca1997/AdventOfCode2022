@@ -33,10 +33,6 @@ impl<T> Grid<T> {
     fn shape(&self) -> (usize, usize) {
         (self.width, self.height)
     }
-
-    fn iter(&self) -> impl Iterator<Item = &T> {
-        self.memory.iter()
-    }
 }
 
 impl<T> Grid<T>
