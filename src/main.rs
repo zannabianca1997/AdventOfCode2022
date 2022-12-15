@@ -83,29 +83,26 @@ fn run_part(part: SolveFn, input: &str) -> Result<RunResult, Box<dyn Error>> {
 }
 
 fn run_day(day: u8, parts: PartSpec, input: &str) -> Result<DayResult, Box<dyn Error>> {
-    use days::SolveState::*;
     use PartSpec::*;
-    match (parts, DAYS[day as usize - 1]) {
-        (_, Unsolved) => Err(format!("Day {} is still unsolved!", day).into()),
-        (Second, P1Done(_)) => Err(format!("Day {} second part is still unsolved!", day).into()),
-        (Both, P1Done(_)) => Err(format!("Day {} second part is still unsolved!", day).into()),
-
-        (First, P1Done(p1)) => Ok(DayResult {
-            p1: Some(run_part(p1, input)?),
+    match (parts, &DAYS[day as usize - 1]) {
+        (First, (Some(p1), _, _)) => Ok(DayResult {
+            p1: Some(run_part(*p1, input)?),
             p2: None,
         }),
-        (First, Done(p1, _)) => Ok(DayResult {
-            p1: Some(run_part(p1, input)?),
-            p2: None,
-        }),
-        (Second, Done(_, p2)) => Ok(DayResult {
+        (Second, (_, Some(p2), _)) => Ok(DayResult {
             p1: None,
-            p2: Some(run_part(p2, input)?),
+            p2: Some(run_part(*p2, input)?),
         }),
-        (Both, Done(p1, p2)) => Ok(DayResult {
-            p1: Some(run_part(p1, input)?),
-            p2: Some(run_part(p2, input)?),
+        (Both, (Some(p1), Some(p2), _)) => Ok(DayResult {
+            p1: Some(run_part(*p1, input)?),
+            p2: Some(run_part(*p2, input)?),
         }),
+        // Errors
+        (First, (None, _, _)) => Err(format!("First part of day {day} is unsolved").into()),
+        (Second, (_, None, _)) => Err(format!("Second part of day {day} is unsolved").into()),
+        (Both, (None, _, _) | (_, None, _)) => {
+            Err(format!("Some parts of day {day} are unsolved").into())
+        }
     }
 }
 
@@ -392,13 +389,13 @@ fn main() -> Result<(), Box<dyn Error>> {
             None => {
                 let path = args.inputs_dir.unwrap();
                 for d in 1..=25 {
-                    use days::SolveState::*;
                     use PartSpec::*;
                     let input = get_input_from_input_dir(d, &path);
                     to_run[d as usize - 1] = match DAYS[d as usize - 1] {
-                        Unsolved => None,
-                        P1Done(_) => Some((First, read_file(input.as_path())?)),
-                        Done(_, _) => Some((Both, read_file(input.as_path())?)),
+                        (None, None, _) => None,
+                        (Some(_), None, _) => Some((First, read_file(input.as_path())?)),
+                        (None, Some(_), _) => Some((Second, read_file(input.as_path())?)),
+                        (Some(_), Some(_), _) => Some((Both, read_file(input.as_path())?)),
                     }
                 }
             }

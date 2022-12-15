@@ -1,20 +1,20 @@
-use std::error::Error;
+use std::{error::Error, path::Path};
 
-mod _1;
+mod _01;
+mod _02;
+mod _03;
+mod _04;
+mod _05;
+mod _06;
+mod _07;
+mod _08;
+mod _09;
 mod _10;
 mod _11;
 mod _12;
 mod _13;
 mod _14;
 mod _15;
-mod _2;
-mod _3;
-mod _4;
-mod _5;
-mod _6;
-mod _7;
-mod _8;
-mod _9;
 
 pub enum ResultRepr {
     Short(String),
@@ -39,41 +39,32 @@ impl PuzzleResult {
 }
 
 pub type SolveFn = fn(&str) -> Result<PuzzleResult, Box<dyn Error>>;
+pub type ReprFn = fn(&str, Path) -> Result<(), Box<dyn Error>>;
 
-#[derive(Clone, Copy)]
-#[allow(dead_code)]
-pub enum SolveState {
-    Unsolved,
-    P1Done(SolveFn),
-    Done(SolveFn, SolveFn),
-}
-
-use SolveState::*;
-
-pub const DAYS: [SolveState; 25] = [
-    Done(_1::part1, _1::part2),
-    Done(_2::part1, _2::part2),
-    Done(_3::part1, _3::part2),
-    Done(_4::part1, _4::part2),
-    Done(_5::part1, _5::part2),
-    Done(_6::part1, _6::part2),
-    Done(_7::part1, _7::part2),
-    Done(_8::part1, _8::part2),
-    Done(_9::part1, _9::part2),
-    Done(_10::part1, _10::part2),
-    Done(_11::part1, _11::part2),
-    Done(_12::part1, _12::part2),
-    Done(_13::part1, _13::part2),
-    Done(_14::part1, _14::part2),
-    Done(_15::part1, _15::part2),
-    Unsolved,
-    Unsolved,
-    Unsolved,
-    Unsolved,
-    Unsolved,
-    Unsolved,
-    Unsolved,
-    Unsolved,
-    Unsolved,
-    Unsolved,
+pub const DAYS: [(Option<SolveFn>, Option<SolveFn>, Vec<ReprFn>); 25] = [
+    (Some(_01::part1), Some(_01::part2), vec![]),
+    (Some(_02::part1), Some(_02::part2), vec![]),
+    (Some(_03::part1), Some(_03::part2), vec![]),
+    (Some(_04::part1), Some(_04::part2), vec![]),
+    (Some(_05::part1), Some(_05::part2), vec![]),
+    (Some(_06::part1), Some(_06::part2), vec![]),
+    (Some(_07::part1), Some(_07::part2), vec![]),
+    (Some(_08::part1), Some(_08::part2), vec![]),
+    (Some(_09::part1), Some(_09::part2), vec![]),
+    (Some(_10::part1), Some(_10::part2), vec![]),
+    (Some(_11::part1), Some(_11::part2), vec![]),
+    (Some(_12::part1), Some(_12::part2), vec![]),
+    (Some(_13::part1), Some(_13::part2), vec![]),
+    (Some(_14::part1), Some(_14::part2), vec![]),
+    (Some(_15::part1), Some(_15::part2), vec![]),
+    (None, None, vec![]),
+    (None, None, vec![]),
+    (None, None, vec![]),
+    (None, None, vec![]),
+    (None, None, vec![]),
+    (None, None, vec![]),
+    (None, None, vec![]),
+    (None, None, vec![]),
+    (None, None, vec![]),
+    (None, None, vec![]),
 ];
