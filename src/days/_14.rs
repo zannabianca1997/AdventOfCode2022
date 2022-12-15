@@ -197,7 +197,6 @@ pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let input = parse_input(input)?;
     let drop_pos: (isize, isize) = (500, 0);
     let (mut field, drop_pos) = make_field(input, drop_pos, true)?;
-    dbg!(drop_pos);
 
     let mut deposited_grains = 0;
     'grains: loop {
