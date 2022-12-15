@@ -358,7 +358,7 @@ fn result_table(results: Vec<DayResult>) -> String {
     // adding sections
     let mut sections = vec![];
     for (day, part, result) in multilines {
-        sections.push(format!(" === Day {} part {} ===\n\n{}", day, part, result))
+        sections.push(format!(" === Day {day} part {part} ===\n\n{result}"))
     }
 
     // building the result
