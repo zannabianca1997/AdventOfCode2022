@@ -1,10 +1,4 @@
-use std::{
-    collections::{HashSet, VecDeque},
-    error::Error,
-    fmt::Display,
-    isize,
-    iter::once,
-};
+use std::{collections::HashSet, error::Error, fmt::Display, isize, iter::once};
 
 use regex::Regex;
 
@@ -130,6 +124,105 @@ pub fn part1(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
         (impossible_segments.total_len() - beacons_on_line.len()) as _,
     ))
 }
+/// Solution with beacon border intersections
+/// We assume the solution is unique => is constrained by at least 2 sensors boder, or an angle.
+/// Also, we do all with a single call to laxy iterators chain. Cause no one should read this code
+pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
+    const SQUARE_SIZE: isize = 4000000;
+    let sensors: Vec<_> = find_radii(parse_input(input)).collect();
+
+    // find all papable points
+    sensors[..sensors.len() - 1]
+        .iter()
+        .enumerate()
+        .flat_map(|(id1, (s1, r1))| {
+            sensors[id1 + 1..]
+                .iter()
+                .filter(move |(s2, r2)| {
+                    let s_dist = manhattan(*s1, *s2);
+                    s_dist < r1 + r2 && s_dist + r1 > *r2 && s_dist + r2 > *r1
+                })
+                .flat_map(move |(s2, r2)| {
+                    // iterating over all the solutions
+                    [
+                        (
+                            r1 - r2 - s1.0 - s1.1 + s2.0 + s2.1,
+                            -r1 + r2 + s1.0 - s1.1 - s2.0 + s2.1,
+                            (-1, 1, -1, -1),
+                        ),
+                        (
+                            r1 - r2 - s1.0 + s1.1 + s2.0 - s2.1,
+                            -r1 + r2 + s1.0 + s1.1 - s2.0 - s2.1,
+                            (-1, -1, -1, 1),
+                        ),
+                        (
+                            2 + r1 + r2 + s1.0 + s1.1 - s2.0 - s2.1,
+                            2 + r1 + r2 + s1.0 - s1.1 - s2.0 + s2.1,
+                            (1, -1, -1, -1),
+                        ),
+                        (
+                            2 + r1 + r2 + s1.0 - s1.1 - s2.0 + s2.1,
+                            2 + r1 + r2 + s1.0 + s1.1 - s2.0 - s2.1,
+                            (1, 1, -1, 1),
+                        ),
+                        (
+                            2 + r1 + r2 - s1.0 + s1.1 + s2.0 - s2.1,
+                            2 + r1 + r2 - s1.0 - s1.1 + s2.0 + s2.1,
+                            (-1, -1, 1, -1),
+                        ),
+                        (
+                            2 + r1 + r2 - s1.0 - s1.1 + s2.0 + s2.1,
+                            2 + r1 + r2 - s1.0 + s1.1 + s2.0 - s2.1,
+                            (-1, 1, 1, 1),
+                        ),
+                        (
+                            r1 - r2 + s1.0 - s1.1 - s2.0 + s2.1,
+                            -r1 + r2 - s1.0 - s1.1 + s2.0 + s2.1,
+                            (1, 1, 1, -1),
+                        ),
+                        (
+                            r1 - r2 + s1.0 + s1.1 - s2.0 - s2.1,
+                            -r1 + r2 - s1.0 + s1.1 + s2.0 - s2.1,
+                            (1, -1, 1, 1),
+                        ),
+                    ]
+                    .into_iter()
+                    .filter(|(d1, d2, _)| d1 % 2 == 0 && d2 % 2 == 0)
+                    .filter_map(|(d1, d2, a)| {
+                        let (d1, d2) = (d1 / 2, d2 / 2);
+                        debug_assert_eq!(s1.0 + a.0 * (r1 + 1 - d1), s2.0 + a.2 * (r2 + 1 - d2));
+                        debug_assert_eq!(s1.1 + a.1 * d1, s2.1 + a.3 * d2);
+                        if 0 <= d1 && d1 <= r1 + 1 && 0 <= d2 && d2 <= r2 + 1 {
+                            Some((s1.0 + a.0 * (r1 + 1 - d1), s1.1 + a.1 * d1))
+                        } else {
+                            None
+                        }
+                    })
+                    .collect::<Vec<_>>()
+                })
+        })
+        .filter(|pos| pos.0 >= 0 && pos.0 <= SQUARE_SIZE && pos.1 >= 0 && pos.1 <= SQUARE_SIZE)
+        .chain([
+            // edges are special cause they can be constrict by a single sensor
+            (0, 0),
+            (0, SQUARE_SIZE),
+            (SQUARE_SIZE, 0),
+            (SQUARE_SIZE, SQUARE_SIZE),
+        ])
+        // now we check that the points are not inside any other sensor (so it's a valid points)
+        .filter(|pts| {
+            sensors
+                .iter()
+                .all(|(sensor, radius)| manhattan(*sensor, *pts) > *radius)
+        })
+        // we finally take the first point
+        .next()
+        // mapping to error (cause why not at this point)
+        .map(|(x, y)| PuzzleResult::Numeric((x * 4000000 + y) as _))
+        .ok_or("Did not find a free position".into())
+}
+
+/*
 
 /// Solution with iterator over beacon borders
 pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
@@ -156,15 +249,18 @@ pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
             .iter()
             .all(|(sensor, radius)| manhattan(*sensor, *pts) > *radius)
     });
-    // we then take the first point fount
+    // we then take the first point found
     if let Some(pts) = ok_pts.next() {
         Ok(PuzzleResult::Numeric((pts.0 * 4000000 + pts.1) as _))
     } else {
         Err("Did not find a free position".into())
     }
 }
+*/
 
 /*
+//  === Gradient descend solution ===
+//  Runs about 9x slower than the border search one
 
 /// Iterate over all the point in the square [min_x, max_x)x[min_y, max_y)
 /// Jumps all over the place to ensure maximum probability of finding a good start place
