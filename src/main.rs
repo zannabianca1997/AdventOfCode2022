@@ -8,6 +8,7 @@ extern crate arrayvec;
 
 use clap::{builder::PossibleValue, Parser, ValueEnum};
 use days::{PuzzleResult, SolveFn, DAYS};
+use regex::Regex;
 use std::{
     error::Error,
     ffi::OsString,
@@ -58,6 +59,10 @@ struct Args {
     /// Part to solve
     #[arg(short, long, default_value = "both")]
     part: PartSpec,
+
+    /// Run visualizations
+    #[arg(short, long)]
+    visualize: Vec<Regex>,
 }
 
 #[derive(Debug, Clone)]
