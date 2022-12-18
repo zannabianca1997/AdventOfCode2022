@@ -221,7 +221,7 @@ fn result_table(results: Vec<DayResult>) -> String {
     let mut table = Vec::with_capacity(results.len());
     let mut multilines = vec![];
 
-    let mut part_entry = |day: usize, part: usize, res: RunResult| -> (String, String) {
+    let mut part_entry = |day: usize, part: usize, res: &RunResult| -> (String, String) {
         (
             match res.res.repr() {
                 days::ResultRepr::Short(s) => s,
@@ -234,13 +234,13 @@ fn result_table(results: Vec<DayResult>) -> String {
         )
     };
 
-    for (d, res) in results.into_iter().enumerate() {
+    for (d, res) in results.iter().enumerate() {
         // erase empty lines
         if res.p1.is_some() || res.p2.is_some() {
             table.push((
                 (d + 1).to_string(),
-                res.p1.map(|v| part_entry(d + 1, 1, v)),
-                res.p2.map(|v| part_entry(d + 1, 2, v)),
+                res.p1.as_ref().map(|v| part_entry(d + 1, 1, v)),
+                res.p2.as_ref().map(|v| part_entry(d + 1, 2, v)),
             ))
         }
     }
@@ -367,10 +367,28 @@ fn result_table(results: Vec<DayResult>) -> String {
         sections.push(format!(" === Day {day} part {part} ===\n\n{result}"))
     }
 
+    // counting total time
+    let (p1_total, p2_total) =
+        results
+            .iter()
+            .fold((Duration::ZERO, Duration::ZERO), |(t1, t2), r| {
+                (
+                    t1 + r.p1.as_ref().map_or(Duration::ZERO, |p| p.time),
+                    t2 + r.p2.as_ref().map_or(Duration::ZERO, |p| p.time),
+                )
+            });
+    let time_totals = format!(
+        "Part 1: {}\nPart 2: {}\nTotal : {}\n",
+        format_duration(p1_total),
+        format_duration(p2_total),
+        format_duration(p1_total + p2_total)
+    );
+
     // building the result
     let mut result = vec![table_str];
     result.extend(sections);
-    result.join("\n\n")
+    result.push(time_totals);
+    result.join("\n")
 }
 
 fn main() -> Result<(), Box<dyn Error>> {

@@ -17,6 +17,9 @@ mod _12;
 mod _13;
 mod _14;
 mod _15;
+mod _16;
+mod _17;
+mod _18;
 
 pub enum ResultRepr {
     Short(String),
@@ -30,12 +33,12 @@ pub enum PuzzleResult {
     AsciiArt(String),
 }
 impl PuzzleResult {
-    pub fn repr(self) -> ResultRepr {
+    pub fn repr(&self) -> ResultRepr {
         use ResultRepr::*;
         match self {
             PuzzleResult::Numeric(v) => Short(v.to_string()),
-            PuzzleResult::Textual(s) => Short(s),
-            PuzzleResult::AsciiArt(s) => Multiline(s),
+            PuzzleResult::Textual(s) => Short(s.clone()),
+            PuzzleResult::AsciiArt(s) => Multiline(s.clone()),
         }
     }
 }
@@ -63,9 +66,9 @@ pub const DAYS: [(
     (Some(_13::part1), Some(_13::part2), phf_map! {}),
     (Some(_14::part1), Some(_14::part2), phf_map! {}),
     (Some(_15::part1), Some(_15::part2), phf_map! {}),
-    (None, None, phf_map! {}),
-    (None, None, phf_map! {}),
-    (None, None, phf_map! {}),
+    (Some(_16::part1), Some(_16::part2), phf_map! {}),
+    (Some(_17::part1), Some(_17::part2), phf_map! {}),
+    (Some(_18::part1), Some(_18::part2), phf_map! {}),
     (None, None, phf_map! {}),
     (None, None, phf_map! {}),
     (None, None, phf_map! {}),
