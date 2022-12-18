@@ -148,11 +148,12 @@ pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let mut lines: Vec<[bool; 7]> = vec![];
     let mut first_empty_line = 0;
 
-    let mut sync_points = [((0, 0), 0, 0); 4];
-
     let mut jump_happened = false;
     let mut additional_height = 0;
     let mut additional_rocks = 0;
+
+    let mut log = vec![];
+    let mut last_height = 0;
 
     // dropping rocks
     for (rock_total, (rock_num, &rock)) in ROCKS.iter().enumerate().cycle().enumerate() {
@@ -164,13 +165,39 @@ pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
         let rock_height = rock.len();
         let rock_width = rock[0].len();
 
+        if !jump_happened && rock_num == 0 {
+            // logging heigth diffs and push cycle points
+            let heigth_diff = first_empty_line - last_height;
+            last_height = first_empty_line;
+            log.push((pushes_iter.peek().unwrap().0, heigth_diff));
+            // searching for a repetition in the log
+            for rep_len in (1..log.len() / 2).rev() {
+                if log[log.len() - 2 * rep_len..log.len() - rep_len] == log[log.len() - rep_len..] {
+                    // we have a loop
+                    // TODO: check the tiling?
+                    // measure the loop
+                    let rep_rocks = ROCKS.len() * rep_len;
+                    let rep_height: usize =
+                        log[log.len() - rep_len..].iter().map(|(_, dh)| *dh).sum();
+                    // calculate number of repetitions
+                    let repeats = (1000000000000 - rock_total) / rep_rocks;
+
+                    additional_rocks = repeats * rep_rocks;
+                    additional_height = repeats * rep_height;
+                    jump_happened = true;
+
+                    // dbg!(repeats, additional_rocks, additional_height);
+                }
+            }
+        }
+
         // adding additional lines as needed
         if lines.len() < rock_bottom + rock_height {
             lines.resize(rock_bottom + rock_height, [false; 7])
         }
 
         // drop the rock until it rests
-        'drop: while let Some((push_num, &push)) = pushes_iter.next() {
+        'drop: while let Some((_, &push)) = pushes_iter.next() {
             // lateral push
             match push {
                 PushDirection::LEFT => {
@@ -207,9 +234,10 @@ pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
                 lines[rock_bottom + i][rock_left + j] |= v;
             }
         }
+
         // measuring heigth of the tower...
         first_empty_line = lines.len();
-        while lines[first_empty_line - 1] == [false; 7] {
+        while lines.get(first_empty_line - 1) == Some(&[false; 7]) {
             first_empty_line -= 1;
         }
     }
