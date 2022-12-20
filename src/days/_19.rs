@@ -272,7 +272,7 @@ impl Log {
 /*
     Optimization:
         1- do not build more robots than the factory can consume
-        2- keep track of the best geode production, and prune the tree if it cannot keep up
+        2- keep track of the best geode production, and prune the branch if it cannot keep up
         3- try to build the best robots first
         4- if mining resources are sufficient to build a geode bot at each turn, calculate the result of doing that and return it
         5- Do not build robots on the last turn - they won't be of use
