@@ -271,12 +271,25 @@ impl Log {
 
 /*
     Optimization:
-        1- do not build more robots than the factory can consume
-        2- keep track of the best geode production, and prune the branch if it cannot keep up
-        3- try to build the best robots first
-        4- if mining resources are sufficient to build a geode bot at each turn, calculate the result of doing that and return it
+        1- Do not build more robots than the factory can consume.
+            The factory can produce a robot each turn, and has a maximum consumption for each
+            resources. Building more robots - except geode ones - cannot increase the number of
+            geodes at the end
+        2- Keep track of the best geode production, and prune the branch if it cannot keep up
+            A rapid maximum estimate, that assumes we are gonna start producing geode robots once for 
+            turn, give us the maximum we can hope to obtain from this branch. If it's still under the current
+            maximum, aboandon the branch
+        3- Try to build the best robots first
+            Optimization (2) is heavily favoured if the best branches comes first. Usually if we can
+            build a better robot, we should in the near future
+        4- If mining resources are sufficient to build a geode bot at each turn, calculate the result of doing that and return it
+            When we can build a geode-cracking at each turn, there is no use to build anything else. We just project that production and use it.
         5- Do not build robots on the last turn - they won't be of use
-        6- calculate the result of waiting for each bot, skipping waiting <- this go from 1m to 100 ms
+            On the last turn no robot will see any use. We avoid branching leaves thanks to that
+        6- Calculate the result of waiting for each bot, skipping waiting <- this go from 1m to 100 ms
+            While waiting to build a better bot is good, waiting to build the same bot is not. At each branch 
+            we find what robot we can (and should (1)) build next, and wait for it in a single step. 
+            If we cannot build any robot in the remaining time the end result can be calculated and returned.
 */
 
 fn max_geodes(minutes: usize, blueprint: &Blueprint) -> (usize, Log) {
