@@ -117,6 +117,7 @@ pub fn part1(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     Ok(PuzzleResult::Numeric((first_empty_line) as _))
 }
 
+#[allow(dead_code)]
 fn print_state(rock: &[&[bool]], rock_left: usize, rock_bottom: usize, lines: &[[bool; 7]]) {
     for h in (0..lines.len()).rev() {
         print!("|");

@@ -1,5 +1,6 @@
 #![feature(is_some_and)]
 #![feature(slice_group_by)]
+#![feature(int_roundings)]
 
 extern crate clap;
 extern crate regex;

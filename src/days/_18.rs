@@ -1,4 +1,4 @@
-use std::{borrow::Borrow, collections::HashSet, error::Error, num::ParseIntError};
+use std::{borrow::Borrow, error::Error, num::ParseIntError};
 
 use super::PuzzleResult;
 
