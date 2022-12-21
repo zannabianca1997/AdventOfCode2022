@@ -3,6 +3,9 @@ use std::{
     fmt::Debug,
 };
 
+#[cfg(feature="_19_trace")]
+use std::fmt::Display;
+
 use regex::Regex;
 
 use super::PuzzleResult;
