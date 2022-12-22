@@ -570,7 +570,7 @@ pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     let monkeys = parse_input(input)?;
     let eq = MonkeFract::from(root_eq(monkeys)?.const_propagation());
 
-    print!("{eq}");
+    // print!("{eq}");
 
     if eq.frac == MonkePoly::from(0) {
         return Err("Equation is impossible".into());
