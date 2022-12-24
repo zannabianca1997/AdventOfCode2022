@@ -1,4 +1,4 @@
-use std::{error::Error, num::ParseIntError, ops::Index};
+use std::{error::Error, num::ParseIntError};
 
 use super::PuzzleResult;
 
