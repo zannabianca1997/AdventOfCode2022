@@ -52,7 +52,3 @@ pub fn part1(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
             .try_fold(0, |sum, x| x.map(|x| x + sum))?,
     )))
 }
-
-pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
-    todo!()
-}
