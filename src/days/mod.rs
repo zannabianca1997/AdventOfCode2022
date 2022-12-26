@@ -24,6 +24,9 @@ mod _19;
 mod _20;
 mod _21;
 mod _22;
+mod _23;
+mod _24;
+mod _25;
 
 pub enum ResultRepr {
     Short(String),
@@ -77,7 +80,7 @@ pub const DAYS: [(
     (Some(_20::part1), Some(_20::part2), phf_map! {}),
     (Some(_21::part1), Some(_21::part2), phf_map! {}),
     (Some(_22::part1), Some(_22::part2), phf_map! {}),
+    (Some(_23::part1), Some(_23::part2), phf_map! {}),
     (None, None, phf_map! {}),
-    (None, None, phf_map! {}),
-    (None, None, phf_map! {}),
+    (Some(_25::part1), None, phf_map! {}),
 ];
