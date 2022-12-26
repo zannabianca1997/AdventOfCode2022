@@ -5,12 +5,6 @@ use grid::Grid;
 use super::PuzzleResult;
 
 #[derive(Default, Clone, Copy, PartialEq, Eq)]
-enum Tile {
-    #[default]
-    Empty,
-    Elf,
-}
-#[derive(Default, Clone, Copy, PartialEq, Eq)]
 enum Proposal {
     #[default]
     None,
@@ -18,7 +12,7 @@ enum Proposal {
     Blocked,
 }
 
-fn parse_input(map: &str) -> Result<Grid<Tile>, Box<dyn Error>> {
+fn parse_input(map: &str) -> Result<Grid<bool>, Box<dyn Error>> {
     let height = map.lines().count();
     let width = map.lines().map(|l| l.len()).max().unwrap_or(0);
 
@@ -29,8 +23,8 @@ fn parse_input(map: &str) -> Result<Grid<Tile>, Box<dyn Error>> {
             .map(move |(col, ch)| (row, col, ch))
     }) {
         grid[row][col] = match ch {
-            '.' => Tile::Empty,
-            '#' => Tile::Elf,
+            '.' => false,
+            '#' => true,
             ch => return Err(format!("{ch} is not a valid char").into()),
         }
     }
@@ -66,11 +60,11 @@ pub fn part1(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
     ))
 }
 
-fn step(grid: &mut Grid<Tile>, proposals: &mut Grid<Proposal>, step: usize) -> bool {
+fn step(grid: &mut Grid<bool>, proposals: &mut Grid<Proposal>, step: usize) -> bool {
     // first half
     for row in 0..grid.rows() {
         'col: for col in 0..grid.cols() {
-            if grid[row][col] == Tile::Elf {
+            if grid[row][col] {
                 debug_assert!(
                     1 <= row && row < grid.rows() - 1 && 1 <= col && col < grid.cols() - 1
                 );
@@ -78,7 +72,7 @@ fn step(grid: &mut Grid<Tile>, proposals: &mut Grid<Proposal>, step: usize) -> b
                 let mut neighbours = false;
                 for i in [row - 1, row, row + 1] {
                     for j in [col - 1, col, col + 1] {
-                        if (i, j) != (row, col) && grid[i][j] == Tile::Elf {
+                        if (i, j) != (row, col) && grid[i][j] {
                             neighbours = true
                         }
                     }
@@ -114,10 +108,7 @@ fn step(grid: &mut Grid<Tile>, proposals: &mut Grid<Proposal>, step: usize) -> b
 
                 'check_proposals: for j in 0..4 {
                     let (check_list, dest) = &p_list[(step + j) % 4];
-                    if check_list
-                        .iter()
-                        .all(|(row, col)| grid[*row][*col] != Tile::Elf)
-                    {
+                    if check_list.iter().all(|(row, col)| !grid[*row][*col]) {
                         proposal = Some(*dest);
                         break 'check_proposals;
                     };
@@ -139,11 +130,11 @@ fn step(grid: &mut Grid<Tile>, proposals: &mut Grid<Proposal>, step: usize) -> b
     for row in 0..proposals.rows() {
         for col in 0..proposals.cols() {
             if let Proposal::Some(s_row, s_col) = proposals[row][col] {
-                assert!(grid[s_row][s_col] == Tile::Elf);
-                assert!(grid[row][col] == Tile::Empty);
+                debug_assert!(grid[s_row][s_col]);
+                debug_assert!(!grid[row][col]);
                 // move elf
-                grid[s_row][s_col] = Tile::Empty;
-                grid[row][col] = Tile::Elf;
+                grid[s_row][s_col] = false;
+                grid[row][col] = true;
 
                 something_moved = true;
             }
@@ -157,14 +148,14 @@ fn step(grid: &mut Grid<Tile>, proposals: &mut Grid<Proposal>, step: usize) -> b
     something_moved
 }
 
-fn borders(grid: &Grid<Tile>) -> (usize, usize, usize, usize) {
+fn borders(grid: &Grid<bool>) -> (usize, usize, usize, usize) {
     let mut min_row = grid.rows();
     let mut max_row = 0;
     let mut min_col = grid.cols();
     let mut max_col = 0;
     for row in 0..grid.rows() {
         for col in 0..grid.cols() {
-            if grid[row][col] == Tile::Elf {
+            if grid[row][col] {
                 min_row = min_row.min(row);
                 max_row = max_row.max(row + 1);
                 min_col = min_col.min(col);
@@ -175,12 +166,12 @@ fn borders(grid: &Grid<Tile>) -> (usize, usize, usize, usize) {
     (min_row, max_row, min_col, max_col)
 }
 
-fn count_empty(grid: &Grid<Tile>, rect: (usize, usize, usize, usize)) -> usize {
+fn count_empty(grid: &Grid<bool>, rect: (usize, usize, usize, usize)) -> usize {
     let (min_row, max_row, min_col, max_col) = rect;
     let mut count = 0;
     for row in min_row..max_row {
         for col in min_col..max_col {
-            if grid[row][col] == Tile::Empty {
+            if !grid[row][col] {
                 count += 1;
             }
         }
@@ -200,7 +191,7 @@ pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
             .chain(grid.iter_row(grid.rows() - 1))
             .chain(grid.iter_col(0))
             .chain(grid.iter_col(grid.cols() - 1))
-            .any(|t| *t == Tile::Elf)
+            .any(|t| *t)
         {
             grid = expand(grid, 10);
             proposals = Grid::new(grid.rows(), grid.cols());
@@ -214,14 +205,14 @@ pub fn part2(input: &str) -> Result<PuzzleResult, Box<dyn Error>> {
 }
 
 #[allow(dead_code)]
-fn print_grid(grid: &Grid<Tile>) {
+fn print_grid(grid: &Grid<bool>) {
     for row in 0..grid.rows() {
         for col in 0..grid.cols() {
             print!(
                 "{}",
                 match grid[row][col] {
-                    Tile::Empty => '.',
-                    Tile::Elf => '#',
+                    false => '.',
+                    true => '#',
                 }
             )
         }
